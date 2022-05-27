@@ -10,9 +10,10 @@ import os
 
 @functions_framework.http
 def download_excel(request):
-    if request.method == 'OPTIONS':
+    white_origin = ['http://localhost:3000', 'https://code-red-app-313517.web.app', 'https://staging-174a0.web.app']
+    if request.method == 'OPTIONS' and request.headers['Origin'] in white_origin:
         headers = {
-            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Origin': request.headers['Origin'],
             'Access-Control-Allow-Methods': 'GET, POST',
             'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Content-Disposition, Accept, Authorization',
             'Access-Control-Max-Age': '3600'
@@ -21,7 +22,7 @@ def download_excel(request):
         return ('', 204, headers)
     
     headers = {
-        'Access-Control-Allow-Origin': 'https://code-red-app-313517.web.app, https://staging-174a0.web.app',
+        'Access-Control-Allow-Origin': request.headers['Origin'],
         'Access-Control-Allow-Methods': 'GET, POST'
     }
     request_json = request.get_json()

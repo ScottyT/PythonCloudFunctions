@@ -24,12 +24,12 @@ def create_excel(timesheet_data):
     row = 1
     bold = outWorkbook.add_format({'bold': True})
     time_format = outWorkbook.add_format({'num_format': 'hh:mm AM/PM'})
-    duration_format = outWorkbook.add_format({'num_format': 'hh:mm:ss'})
+    duration_format = outWorkbook.add_format({'num_format': 'hh:mm'})
     date_format = outWorkbook.add_format({'num_format': 'mm/dd/yyyy'})
     sheet_names = []
 
     for date_index in jobdate_arr:
-        sheet_names.append("{}".format(date_index))
+        sheet_names.append("{}".format(date_index, '%m-%d-%Y'))
     for name in sheet_names:
         outSheet = outWorkbook.add_worksheet("{}".format(name))
         getSheet = outWorkbook.get_worksheet_by_name("{}".format(outSheet.get_name()))
@@ -47,10 +47,10 @@ def create_excel(timesheet_data):
                 filtered_evals = list(filter(lambda c: c['label'] != 'Total Time', eval_list))
                 
                 eval_dict = {
-                    "Travel In": datetime.strptime(filtered_evals[0]['value'], '%m-%d-%Y %H:%M:%S'),
-                    "Team Arrival": datetime.strptime(filtered_evals[1]['value'], '%m-%d-%Y %H:%M:%S'),
-                    "Time In": datetime.strptime(filtered_evals[1]['value'], '%m-%d-%Y %H:%M:%S'),
-                    "Time Out": datetime.strptime(filtered_evals[2]['value'], '%m-%d-%Y %H:%M:%S')
+                    "Travel In": datetime.strptime(filtered_evals[0]['value'], '%m-%d-%Y %H:%M'),
+                    "Team Arrival": datetime.strptime(filtered_evals[1]['value'], '%m-%d-%Y %H:%M'),
+                    "Time In": datetime.strptime(filtered_evals[1]['value'], '%m-%d-%Y %H:%M'),
+                    "Time Out": datetime.strptime(filtered_evals[2]['value'], '%m-%d-%Y %H:%M')
                 }
                 getSheet.write(row, 0, emp_dict['name'])
                 getSheet.set_column_pixels(0, 0, 120)
@@ -65,8 +65,8 @@ def create_excel(timesheet_data):
                     index = list(eval_dict).index(key)
                     getSheet.write_datetime(row, index + 2, eval_log, time_format)
 
-                getSheet.write_formula(row, 6, '=TEXT(D%d-C%d, "hh:mm:ss")' % (row + 1, row + 1))
-                getSheet.write_formula(row, 7, '=TEXT(F%d-E%d, "hh:mm:ss")' % (row + 1, row + 1))
+                getSheet.write_formula(row, 6, '=TEXT(D%d-C%d, "hh:mm")' % (row + 1, row + 1))
+                getSheet.write_formula(row, 7, '=TEXT(F%d-E%d, "hh:mm")' % (row + 1, row + 1))
                 getSheet.write_formula(row, 8, '=SUM(H%d+G%d)' % (row + 1, row + 1), duration_format)
                 if len(day_reports) > 1:
                     row += 1
